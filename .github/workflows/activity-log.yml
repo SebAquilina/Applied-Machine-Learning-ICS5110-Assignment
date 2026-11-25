@@ -1,0 +1,28 @@
+name: Activity log
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+permissions:
+  issues: read
+jobs:
+  handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.repository.html_url + '/issues/3';
+            const body = context.payload.pull_request.body || '';
+            const links = body.match(/https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/issues\/3#issuecomment-\d+/g) || [];
+            const candidates = links.filter(link => link.startsWith(issue + '#issuecomment-'));
+            for (const link of candidates) {
+              const id = Number(link.split('#issuecomment-')[1]);
+              try {
+                const {data} = await github.rest.issues.getComment({...context.repo, comment_id: id});
+                if (data.html_url === link) return;
+              } catch (error) {
+                if (error.status !== 404) throw error;
+              }
+            }
+            core.setFailed('Post your handoff in issue #3 and link the comment in this PR description.');
