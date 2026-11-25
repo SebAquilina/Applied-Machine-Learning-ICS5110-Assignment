@@ -1,0 +1,9 @@
+dist/
+submission_README.md
+06_admin/*.pdf
+01_report/*.pdf
+02_genai_journal/*.pdf
+04_data/raw/
+.env*
+.ipynb_checkpoints/
+__pycache__/
