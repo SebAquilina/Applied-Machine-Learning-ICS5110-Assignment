@@ -1,0 +1,39 @@
+name: Branch ownership
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  ownership:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const branch = pr.head.ref;
+            const rules = {
+              'member/aquilina': /^(03_code\/01_[a-z0-9_-]+_aquilina\.ipynb$|work\/aquilina\/)/,
+              'member/buttigieg': /^(03_code\/02_[a-z0-9_-]+_buttigieg\.ipynb$|work\/buttigieg\/)/,
+              'member/muscat': /^(03_code\/03_[a-z0-9_-]+_muscat\.ipynb$|work\/muscat\/)/,
+              'data-prep': /^(03_code\/00_data_preparation\.ipynb$|04_data\/(?!raw\/))/,
+              'dashboard': /^03_code\/dashboard\//
+            };
+            if (branch.startsWith('integration/')) {
+              core.notice('Shared changes require human review.');
+              return;
+            }
+            const rule = rules[branch];
+            if (!(rule instanceof RegExp)) return core.setFailed('Unassigned branch');
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              ...context.repo, pull_number: pr.number, per_page: 100
+            });
+            if (files.length !== pr.changed_files) return core.setFailed('Incomplete change list');
+            for (const file of files) {
+              for (const path of [file.filename, file.previous_filename].filter(Boolean)) {
+                if (!rule.test(path)) core.setFailed('Outside assigned files: ' + path);
+              }
+            }
