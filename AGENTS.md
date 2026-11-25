@@ -1,5 +1,17 @@
 # Team agent instructions
 
+## Assignment context — read at the start of every session
+
+**Objective.** For ICS5110 Applied Machine Learning 2026/27, use World Values Survey Wave 7 respondent data to investigate a question across countries. Each member owns one ML technique. The team compares them on the same cleaned data, train-test split and evaluation protocol and presents the findings in one hosted interactive dashboard.
+
+**Team decision.** Our target is Q51: how often the respondent or their family went without enough food in the preceding 12 months (1 often, 2 sometimes, 3 rarely, 4 never). The team has discussed grouping 1–3 versus 4. That is a proposal. Check the latest agreed decisions in issue #3 before treating any recoding, predictors, country exclusions, techniques, metrics or thresholds as final. Preserve the distinction between survey weights and the costs assigned to prediction errors. Dataset access instructions are in 04_data/README.md (see PR #1).
+
+**What good work demonstrates.** Justify the predictors, cleaning, missing codes and survey weights. Explain each model choice and why the mix is informative. Compare models fairly, show how parameter or cost changes affect a demographic or country group, justify the threshold and explain who bears each error. Examine one confident mistake, whether a human could have caught it, and whether weighting errors by their cost changes the ranking. The dashboard must support side-by-side comparison, threshold adjustment, confidence/error inspection and exploration of the data. Interpret country differences as associations.
+
+**Deadlines and delivery.** By 5 December 2026 submit one paragraph naming the topic, target variable and planned data. By 11 January 2027 one nominated member submits the group ZIP to the VLE. It contains the report (20 pages maximum), AI journal (10 pages maximum including references), runnable code and data pipeline, live dashboard URL, signed contribution statement and individual excerpt-consent choices. Keep the dashboard available until marks are published. Follow README.md and the original brief for exact packaging. The brief specifies groups of four or five; three member branches currently appear in the setup. Confirm the roster or an approved exception with the team.
+
+**Assessment priorities.** Judgement 30%; dataset 15%; interactive dashboard 15%; comparison and insights 15%; documentation 15%; AI journal 10%. Implementation carries no separate marks. Record enough evidence for each member to explain their choices in a viva, including citations for third-party and AI-generated material.
+
 Use a separate clone or worktree per agent. Read these rules before editing. Ask the operator for their assigned branch. Check git branch --show-current before editing, committing and pushing. Stop on a mismatch, detached HEAD, unexpected edits or overlapping assignments. Never switch branches on the operator's behalf.
 
 Member branches own only their numbered notebook in 03_code (01_*_aquilina.ipynb, 02_*_buttigieg.ipynb, 03_*_muscat.ipynb respectively), and their own folder under work/ named after their branch suffix. data-prep owns 03_code/00_data_preparation.ipynb and 04_data. dashboard owns 03_code/dashboard. Coordinate shared files through a separately assigned integration branch and human review.
