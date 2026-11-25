@@ -6,6 +6,12 @@ Member branches own only their numbered notebook in 03_code (01_*_aquilina.ipynb
 
 Never write directly to main, push to another branch, force push, delete branches, merge PRs, discard others' edits or change these controls on a member branch. Explicitly push HEAD to the assigned branch. Open a PR for human review. Flag shared-data or dependency changes for integration. Use the agreed dataset, split and evaluation protocol. Record AI use and checks in your own work folder. Keep raw data, IDs, signatures, consent forms and secrets off public GitHub.
 
+## Coordinate every session in [the shared activity log](https://github.com/SebAquilina/Applied-Machine-Learning-ICS5110-Assignment/issues/3)
+
+Read the latest comments when starting or resuming. Post the member name, branch and task before starting. For joint tasks agree on owners and inputs/outputs; acknowledge requests and reply when resolved. Post blockers when they arise. Before ending every session, including research-only work, append the outcome, reasons, checks and next owner. Link detailed evidence instead of duplicating it. If GitHub commenting is unavailable, keep the entry in your assigned notes, flag it as pending and post it when access returns. Never claim an update was posted unless confirmed.
+
+Every PR description must link directly to its session handoff comment in issue #3. Reviewers should confirm the entry describes the changes and checks. The coordination workflow verifies the linked comment exists.
+
 ## Keep an assignment record as you work
 
 On a member branch, maintain one running Markdown file at `work/<surname>/log.md`. On data-prep or dashboard, record the same details in the relevant PR description or a follow-up PR comment, so working notes stay out of the submission and inside the branch ownership rules. Link related entries across branches. Read the latest entries when resuming. Update the record with each substantive decision, experiment or AI-assisted contribution, including failed attempts that changed the work. At handoff, link the entries and identify outstanding decisions and their owners.
