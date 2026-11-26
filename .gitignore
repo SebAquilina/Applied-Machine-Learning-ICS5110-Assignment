@@ -7,3 +7,6 @@ submission_README.md
 .env*
 .ipynb_checkpoints/
 __pycache__/
+.venv/
+venv/
+.DS_Store
