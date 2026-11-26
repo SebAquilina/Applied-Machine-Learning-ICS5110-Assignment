@@ -2,6 +2,8 @@
 
 [Open the cleaned CSV in Google Drive (Matthias's private copy)](https://drive.google.com/file/d/1fd0KxumeZjYCFpVEgWpSIyoCUAYt2xvJ/view?usp=drivesdk)
 
+[View the two cleaning graphs and download the Word section for the group report](report/)
+
 **What changed.** The World Values Survey Wave 7 v6.0 file contains 97,220 respondents. Removing 516 people with no usable Q51 answer leaves **96,704 people across 66 country or territory samples**. The cleaned file keeps respondents who skipped an input. Six background questions produce **18 numeric model inputs**, including missing-answer indicators. All 18 can be passed directly to scikit-learn.
 
 **Working definition for the group to review.** The default target is 1 when a respondent said they or their family **often, sometimes or rarely** went without enough food in the past 12 months, and 0 for **never**. That gives 29,932 positive and 66,772 negative examples. The alternative definition counts only “sometimes” and “often” as positive, giving 14,891 positives on the same rows. [Team discussion](https://github.com/SebAquilina/Applied-Machine-Learning-ICS5110-Assignment/issues/3#issuecomment-7171698228)
