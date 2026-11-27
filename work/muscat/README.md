@@ -2,6 +2,8 @@
 
 [Download the four-category CSV from Matthias’s private Google Drive](https://drive.google.com/file/d/1UCF87lgEG38w1EhA2LnCVSkCG2zPgbBd/view?usp=drivesdk)
 
+[Open Matthias’s four-category logistic regression notebook](../../03_code/03_logistic_regression_muscat.ipynb)
+
 [View the two cleaning graphs and download the Word section for the group report](report/)
 
 **What changed.** The World Values Survey Wave 7 v6.0 file contains 97,220 respondents. Removing 516 people with no usable Q51 answer leaves **96,704 people across 66 country or territory samples**. The cleaned file keeps respondents who skipped an input. Six background questions produce **18 numeric model inputs**, including missing-answer indicators. All 18 can be passed directly to scikit-learn.
@@ -25,7 +27,7 @@ Team members with the original survey can generate their own copy. From the repo
 python work/muscat/clean_q51.py 04_data/raw/WVS_Cross-National_Wave_7_csv_v6_0.csv
 ```
 
-The output is `work/muscat/private/ICS5110_Q51_clean_frequency.csv`. Its SHA-256 is `78025cffcefcf6a699d4bcd54f991202d659e48e57392117de3120fa22720eba`. The public repository stores the code and aggregate results. The Drive link uses the file owner’s access controls.
+The output is `work/muscat/private/ICS5110_Q51_clean_frequency.csv`. The [dataset record](q51_dataset.json) lists its filename, SHA-256 checksum, 18 input columns, class counts, private download and rebuild command. The public repository stores the code and aggregates. The respondent CSV is kept private because WVS restricts redistribution of its data files. [WVS conditions of use](https://www.worldvaluessurvey.org/AJDownloadLicense.jsp)
 
 The default is `--target frequency`. To reproduce the earlier binary comparisons, use `--target any` for any reported shortage or `--target sometimes-often` for shortages reported sometimes or often. Each option writes a separate file. If you have the exact review CSV produced by [review_q51.py](review_q51.py), pass that file with `--from-review` to reproduce the same output.
 
@@ -53,3 +55,9 @@ For the five numeric or ordered inputs, a missing answer has value 0 and a match
 **Optional comparison.** The two `optional_` columns encode Q54, frequency of going without cash income (1 often to 4 never), and its missing flag. Add them together only for the comparison that includes same-period cash hardship. The five `meta_` columns hold the original one-based data-record number, survey sample, year and two survey weights. Keep them separate from `X` for split alignment, weighting and subgroup analysis.
 
 The script preserves source order. Use the same split for every model and fit any scaling, imputation or tuning on training folds. Run `python work/muscat/test_clean_q51.py` to check the code mapping on a small example. [Four-category cleaning decisions and verification](log.md#27-november-2026--four-category-q51-dataset)
+
+## Run the logistic regression notebook
+
+Open the [notebook](../../03_code/03_logistic_regression_muscat.ipynb) in Jupyter and select **Run All**. From a fresh checkout, its default run fits a model to 600 fictional respondents and shows probabilities for the four answers, overall and per-class metrics, a confusion matrix and a threshold comparison. It was checked with Python 3.12.14, scikit-learn 1.8.0, pandas 2.2.3 and NumPy 2.3.5.
+
+For the survey experiment, put the CSV at the rebuild path above and change `DATA_SOURCE` from `"demo"` to `"survey"`. The loader checks the dataset fingerprint before fitting. If the team adopts the proposed split, `SPLIT_CSV = None` reproduces it. It sorts by the source-row key, stratifies by the four answers and uses seed 42. This gives 77,363 training respondents and 19,341 test respondents. To use another shared split, set `SPLIT_CSV` to a CSV containing `meta_source_row` and `split` (train or test). The model fits the scaler on the training set and uses the held-out set for evaluation. [Shared split proposal](https://github.com/SebAquilina/Applied-Machine-Learning-ICS5110-Assignment/issues/3#issuecomment-7214244801)
