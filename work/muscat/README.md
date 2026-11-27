@@ -1,12 +1,21 @@
 # Matthias Muscat · Q51 food shortage data
 
-[Open the cleaned CSV in Google Drive (Matthias's private copy)](https://drive.google.com/file/d/1fd0KxumeZjYCFpVEgWpSIyoCUAYt2xvJ/view?usp=drivesdk)
+[Download the four-category CSV from Matthias’s private Google Drive](https://drive.google.com/file/d/1UCF87lgEG38w1EhA2LnCVSkCG2zPgbBd/view?usp=drivesdk)
 
 [View the two cleaning graphs and download the Word section for the group report](report/)
 
 **What changed.** The World Values Survey Wave 7 v6.0 file contains 97,220 respondents. Removing 516 people with no usable Q51 answer leaves **96,704 people across 66 country or territory samples**. The cleaned file keeps respondents who skipped an input. Six background questions produce **18 numeric model inputs**, including missing-answer indicators. All 18 can be passed directly to scikit-learn.
 
-**Working definition for the group to review.** The default target is 1 when a respondent said they or their family **often, sometimes or rarely** went without enough food in the past 12 months, and 0 for **never**. That gives 29,932 positive and 66,772 negative examples. The alternative definition counts only “sometimes” and “often” as positive, giving 14,891 positives on the same rows. [Team discussion](https://github.com/SebAquilina/Applied-Machine-Learning-ICS5110-Assignment/issues/3#issuecomment-7171698228)
+**What the model predicts.** How often did the respondent or their family go without enough food in the previous 12 months? Matthias chose to keep all four Q51 answers for this version. The target column is `target_frequency`. Higher class numbers mean more frequent shortages. The class numbers express order and do not specify how many times a shortage occurred. [Team discussion](https://github.com/SebAquilina/Applied-Machine-Learning-ICS5110-Assignment/issues/3#issuecomment-7213984459)
+
+| Output class | Q51 answer | Original WVS code | Respondents | Share of valid answers |
+|---:|---|---:|---:|---:|
+| 0 | Never | 4 | 66,772 | 69.05% |
+| 1 | Rarely | 3 | 15,041 | 15.55% |
+| 2 | Sometimes | 2 | 10,933 | 11.31% |
+| 3 | Often | 1 | 3,958 | 4.09% |
+
+These are unweighted counts and percentages. The “often” class is the smallest, so report its performance separately when comparing techniques. The team still needs to agree on the split and evaluation protocol for its shared comparison.
 
 ## Rebuild the CSV
 
@@ -16,18 +25,18 @@ Team members with the original survey can generate their own copy. From the repo
 python work/muscat/clean_q51.py 04_data/raw/WVS_Cross-National_Wave_7_csv_v6_0.csv
 ```
 
-The output is `work/muscat/private/ICS5110_Q51_clean_any_shortage.csv`. The public repository stores the code and aggregate results. The Drive link uses the file owner's access controls. The default CSV's SHA-256 is `d1ac155065ce09e51dd20c102fa7e7bf5d33f5e1fb6b4e6758637085585d9c5e`.
+The output is `work/muscat/private/ICS5110_Q51_clean_frequency.csv`. Its SHA-256 is `78025cffcefcf6a699d4bcd54f991202d659e48e57392117de3120fa22720eba`. The public repository stores the code and aggregate results. The Drive link uses the file owner’s access controls.
 
-Add `--target sometimes-often` to generate a separate file for the stricter definition. If you already have the exact review CSV produced by [review_q51.py](review_q51.py), pass that file and add `--from-review` to get the same output.
+The default is `--target frequency`. To reproduce the earlier binary comparisons, use `--target any` for any reported shortage or `--target sometimes-often` for shortages reported sometimes or often. Each option writes a separate file. If you have the exact review CSV produced by [review_q51.py](review_q51.py), pass that file with `--from-review` to reproduce the same output.
 
 ## Use the model inputs
 
 ```python
 import pandas as pd
 
-data = pd.read_csv("work/muscat/private/ICS5110_Q51_clean_any_shortage.csv")
+data = pd.read_csv("work/muscat/private/ICS5110_Q51_clean_frequency.csv")
 X = data.filter(regex="^x_")           # six questions encoded into 18 numeric columns
-y = data["target_any_shortage"]        # one outcome per respondent
+y = data["target_frequency"]           # 0 never, 1 rarely, 2 sometimes, 3 often
 ```
 
 | Field | What it supplies |
@@ -43,4 +52,4 @@ For the five numeric or ordered inputs, a missing answer has value 0 and a match
 
 **Optional comparison.** The two `optional_` columns encode Q54, frequency of going without cash income (1 often to 4 never), and its missing flag. Add them together only for the comparison that includes same-period cash hardship. The five `meta_` columns hold the original one-based data-record number, survey sample, year and two survey weights. Keep them separate from `X` for split alignment, weighting and subgroup analysis.
 
-The script preserves source order and leaves the team’s train/test split open. Fit any scaling, imputation or tuning that uses data on training folds when the team agrees its evaluation protocol. [Cleaning decisions and verification](log.md#26-november-2026--cleaning-for-machine-learning)
+The script preserves source order. Use the same split for every model and fit any scaling, imputation or tuning on training folds. Run `python work/muscat/test_clean_q51.py` to check the code mapping on a small example. [Four-category cleaning decisions and verification](log.md#27-november-2026--four-category-q51-dataset)

@@ -8,7 +8,7 @@ These figures accompany Section 3, Data Preparation. Both use the 96,704 respond
 
 ![Q51 responses in the previous 12 months. Often 3,958, sometimes 10,933, rarely 15,041, never 66,772.](q51_responses.png)
 
-**Figure 1.** The choice is where to put the 15,041 people who answered “rarely”. Counting “often” and “sometimes” gives 14,891 positive examples (15.40%). Including “rarely” gives 29,932 (30.95%). The group has chosen Q51 and still needs to confirm the grouping.
+**Figure 1.** The four-category member dataset preserves “never” (class 0), “rarely” (1), “sometimes” (2) and “often” (3). The 15,041 people who answered “rarely” have their own class. “Never” is the largest class (66,772) and “often” is the smallest (3,958), so an overall accuracy score can obscure how well a model identifies frequent shortages. [Target codes and dataset](../README.md)
 
 ## Which questions had the most missing answers?
 

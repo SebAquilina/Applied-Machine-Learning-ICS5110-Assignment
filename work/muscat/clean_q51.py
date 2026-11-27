@@ -11,8 +11,10 @@ from review_q51 import EMPLOYMENT, FREQUENCY, HEALTH, INPUTS, review_tables, wri
 
 
 DEFINITIONS = {
-    "any": ("any_shortage", (1, 2, 3)),
-    "sometimes-often": ("sometimes_or_often", (1, 2)),
+    # Original WVS codes are 1 often, 2 sometimes, 3 rarely and 4 never.
+    "frequency": ("frequency", {4: 0, 3: 1, 2: 2, 1: 3}),
+    "any": ("any_shortage", {4: 0, 3: 1, 2: 1, 1: 1}),
+    "sometimes-often": ("sometimes_or_often", {4: 0, 3: 0, 2: 1, 1: 1}),
 }
 REVIEW_SHA256 = "80da1b8b0ed8d51fa94fa5ada9488d35df3d06ac1e86214d6f81f702f0b2094b"
 PRIVATE_DIR = Path(__file__).resolve().parent / "private"
@@ -36,10 +38,10 @@ def encode_item(output, name, values):
 
 
 def make_table(review, definition):
-    suffix, positives = DEFINITIONS[definition]
+    suffix, target_codes = DEFINITIONS[definition]
     labelled = review.loc[review["Q51_original_code"].isin(FREQUENCY)]
     output = pd.DataFrame(index=labelled.index)
-    output[f"target_{suffix}"] = labelled["Q51_original_code"].isin(positives).astype(int)
+    output[f"target_{suffix}"] = labelled["Q51_original_code"].map(target_codes).astype(int)
 
     for field, name in [
         ("Q262", "x_age"), ("Q275", "x_education"), ("Q288", "x_income"),
@@ -79,7 +81,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source", type=Path, help="Original WVS Wave 7 v6.0 CSV")
     parser.add_argument("--from-review", action="store_true", help="Use the audited private review CSV")
-    parser.add_argument("--target", choices=DEFINITIONS, default="any", help="Which Q51 responses count as positive")
+    parser.add_argument("--target", choices=DEFINITIONS, default="frequency",
+                        help="Use the four Q51 responses (default) or a binary grouping")
     parser.add_argument("--output", type=Path, help="Optional CSV path. The default is under work/muscat/private/")
     args = parser.parse_args()
     suffix, _ = DEFINITIONS[args.target]
@@ -90,8 +93,9 @@ def main():
     output = make_table(review, args.target)
     destination.parent.mkdir(parents=True, exist_ok=True)
     write_csv(output, destination)
-    positives = int(output[f"target_{suffix}"].sum())
-    print(f"Saved {destination} with {len(output):,} labelled records and {positives:,} positives.")
+    counts = output[f"target_{suffix}"].value_counts().sort_index()
+    print(f"Saved {destination} with {len(output):,} labelled records.")
+    print("Rows by output class: " + ", ".join(f"{code} = {count:,}" for code, count in counts.items()))
     print(f"Removed {len(review) - len(output):,} records without a valid Q51 response.")
 
 
