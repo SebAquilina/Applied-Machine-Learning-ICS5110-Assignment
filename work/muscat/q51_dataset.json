@@ -1,0 +1,25 @@
+{
+  "name": "Q51 food-shortage frequency, four-category member dataset",
+  "source": "World Values Survey Wave 7 Cross-National Data-Set, v6.0.0",
+  "source_doi": "https://doi.org/10.14281/18241.24",
+  "conditions_of_use": "https://www.worldvaluessurvey.org/AJDownloadLicense.jsp",
+  "filename": "ICS5110_Q51_clean_frequency.csv",
+  "sha256": "78025cffcefcf6a699d4bcd54f991202d659e48e57392117de3120fa22720eba",
+  "private_download": null,
+  "rebuild_from_repository_root": "python work/muscat/clean_q51.py 04_data/raw/WVS_Cross-National_Wave_7_csv_v6_0.csv",
+  "rows": 96704,
+  "target": "target_frequency",
+  "row_key": "meta_source_row",
+  "classes": [
+    {"code": 0, "label": "Never", "wvs_code": 4, "rows": 66772},
+    {"code": 1, "label": "Rarely", "wvs_code": 3, "rows": 15041},
+    {"code": 2, "label": "Sometimes", "wvs_code": 2, "rows": 10933},
+    {"code": 3, "label": "Often", "wvs_code": 1, "rows": 3958}
+  ],
+  "features": [
+    "x_age", "x_age_missing", "x_education", "x_education_missing",
+    "x_income", "x_income_missing", "x_financial_satisfaction", "x_financial_satisfaction_missing",
+    "x_health", "x_health_missing", "x_employment_2", "x_employment_3", "x_employment_4",
+    "x_employment_5", "x_employment_6", "x_employment_7", "x_employment_8", "x_employment_missing"
+  ]
+}
