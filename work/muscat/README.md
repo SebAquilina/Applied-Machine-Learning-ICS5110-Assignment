@@ -1,8 +1,8 @@
 # Matthias Muscat · Q51 food shortage data
 
-[Download the four-category CSV from Matthias’s private Google Drive](https://drive.google.com/file/d/1UCF87lgEG38w1EhA2LnCVSkCG2zPgbBd/view?usp=drivesdk)
+[Get the Wave 7 v6.0 source from WVS](https://doi.org/10.14281/18241.24) · [Rebuild the private four-category CSV](#rebuild-the-csv)
 
-[Open Matthias’s four-category logistic regression notebook](../../03_code/03_logistic_regression_muscat.ipynb)
+[Review the actual survey results and confusion matrix](results/logistic_regression/) · [Open the executed logistic regression notebook](../../03_code/03_logistic_regression_muscat.ipynb)
 
 [View the two cleaning graphs and download the Word section for the group report](report/)
 
@@ -17,7 +17,7 @@
 | 2 | Sometimes | 2 | 10,933 | 11.31% |
 | 3 | Often | 1 | 3,958 | 4.09% |
 
-These are unweighted counts and percentages. The “often” class is the smallest, so report its performance separately when comparing techniques. The team still needs to agree on the split and evaluation protocol for its shared comparison.
+These are unweighted counts and percentages. The “often” class is the smallest. Matthias’s experiment reports separate results for all four answers. The [evaluation results](results/logistic_regression/) give the split and measures that other members can reuse for their comparison.
 
 ## Rebuild the CSV
 
@@ -27,7 +27,7 @@ Team members with the original survey can generate their own copy. From the repo
 python work/muscat/clean_q51.py 04_data/raw/WVS_Cross-National_Wave_7_csv_v6_0.csv
 ```
 
-The output is `work/muscat/private/ICS5110_Q51_clean_frequency.csv`. The [dataset record](q51_dataset.json) lists its filename, SHA-256 checksum, 18 input columns, class counts, private download and rebuild command. The public repository stores the code and aggregates. The respondent CSV is kept private because WVS restricts redistribution of its data files. [WVS conditions of use](https://www.worldvaluessurvey.org/AJDownloadLicense.jsp)
+The output is `work/muscat/private/ICS5110_Q51_clean_frequency.csv`. The [dataset record](q51_dataset.json) lists its filename, SHA-256 checksum, 18 input columns, class counts and rebuild command. The public repository stores the code and aggregates. The respondent CSV is kept private because WVS restricts redistribution of its data files. [WVS conditions of use](https://www.worldvaluessurvey.org/AJDownloadLicense.jsp)
 
 The default is `--target frequency`. To reproduce the earlier binary comparisons, use `--target any` for any reported shortage or `--target sometimes-often` for shortages reported sometimes or often. Each option writes a separate file. If you have the exact review CSV produced by [review_q51.py](review_q51.py), pass that file with `--from-review` to reproduce the same output.
 
@@ -58,6 +58,8 @@ The script preserves source order. Use the same split for every model and fit an
 
 ## Run the logistic regression notebook
 
-Open the [notebook](../../03_code/03_logistic_regression_muscat.ipynb) in Jupyter and select **Run All**. From a fresh checkout, its default run fits a model to 600 fictional respondents and shows probabilities for the four answers, overall and per-class metrics, a confusion matrix and a threshold comparison. It was checked with Python 3.12.14, scikit-learn 1.8.0, pandas 2.2.3 and NumPy 2.3.5.
+The [executed notebook](../../03_code/03_logistic_regression_muscat.ipynb) shows the actual survey run on GitHub. Put the private CSV at the rebuild path above, open the notebook in Jupyter and select **Run All** to reproduce it. The defaults are `DATA_SOURCE = "survey"` and `SPLIT_CSV = None`. The loader verifies the dataset checksum. The run used Python 3.12.14, scikit-learn 1.8.0, pandas 2.2.3, NumPy 2.3.5 and Matplotlib 3.10.8. The notebook also imports SciPy and threadpoolctl, which are scikit-learn dependencies.
 
-For the survey experiment, put the CSV at the rebuild path above and change `DATA_SOURCE` from `"demo"` to `"survey"`. The loader checks the dataset fingerprint before fitting. If the team adopts the proposed split, `SPLIT_CSV = None` reproduces it. It sorts by the source-row key, stratifies by the four answers and uses seed 42. This gives 77,363 training respondents and 19,341 test respondents. To use another shared split, set `SPLIT_CSV` to a CSV containing `meta_source_row` and `split` (train or test). The model fits the scaler on the training set and uses the held-out set for evaluation. [Shared split proposal](https://github.com/SebAquilina/Applied-Machine-Learning-ICS5110-Assignment/issues/3#issuecomment-7214244801)
+Sorting by source row and stratifying by Q51 with seed 42 gives 77,363 training respondents and 19,341 test respondents. Five-fold validation within training compares eight model settings by macro-F1, with scaling fitted inside each fold. The held-out macro-F1 was 0.304 for logistic regression and 0.204 for always predicting “never”. [Results by answer, model parameters and confusion matrix](results/logistic_regression/)
+
+To try a different assignment, set `SPLIT_CSV` to a repository-relative CSV with `meta_source_row` and `split` (train or test). Those outputs go to `work/muscat/private/logistic_regression_custom_split/`. Selecting `DATA_SOURCE = "demo"` runs a 600-row fictional example for code checks. [Member experiment protocol](https://github.com/SebAquilina/Applied-Machine-Learning-ICS5110-Assignment/issues/3#issuecomment-7220289828)

@@ -4,6 +4,8 @@
 
 These figures accompany Section 3, Data Preparation. Both use the 96,704 respondents who answered World Values Survey question Q51. The percentages describe the pooled, unweighted sample.
 
+For the modelling section, see the [four-category logistic regression results and test confusion matrix](../results/logistic_regression/).
+
 ## How often did respondents report going without enough food?
 
 ![Q51 responses in the previous 12 months. Often 3,958, sometimes 10,933, rarely 15,041, never 66,772.](q51_responses.png)

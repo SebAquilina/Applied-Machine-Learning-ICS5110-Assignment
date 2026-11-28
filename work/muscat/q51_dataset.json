@@ -5,7 +5,7 @@
   "conditions_of_use": "https://www.worldvaluessurvey.org/AJDownloadLicense.jsp",
   "filename": "ICS5110_Q51_clean_frequency.csv",
   "sha256": "78025cffcefcf6a699d4bcd54f991202d659e48e57392117de3120fa22720eba",
-  "private_download": "https://drive.google.com/file/d/1UCF87lgEG38w1EhA2LnCVSkCG2zPgbBd/view?usp=drivesdk",
+  "private_download": null,
   "rebuild_from_repository_root": "python work/muscat/clean_q51.py 04_data/raw/WVS_Cross-National_Wave_7_csv_v6_0.csv",
   "rows": 96704,
   "target": "target_frequency",
